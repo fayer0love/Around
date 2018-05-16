@@ -35,7 +35,7 @@ const (
 	//PROJECT_ID = "around-xxx"
 	//BT_INSTANCE = "around-post"
 	// Needs to update this URL if you deploy it to cloud.
-	ES_URL = "http://35.231.216.206:9200"
+	ES_URL = "http://35.229.43.99:9200"
 	// Needs to update this bucket based on your gcs bucket name.
 	BUCKET_NAME = "fayer0love-around"
 
