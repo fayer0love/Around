@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"cloud.google.com/go/storage"
-	elastic "gopkg.in/olivere/elastic.v3"
+	"gopkg.in/olivere/elastic.v3"
 	"fmt"
 	"net/http"
 	"encoding/json"
@@ -12,6 +12,9 @@ import (
 	"log"
 	"github.com/pborman/uuid"
 	"io"
+	"github.com/gorilla/mux"
+	"github.com/auth0/go-jwt-middleware"
+	"github.com/dgrijalva/jwt-go"
 )
 
 type Location struct {
@@ -40,6 +43,8 @@ const (
 	BUCKET_NAME = "fayer0love-around"
 
 )
+
+var mySigningKey = []byte("secret")
 
 func main() {
 	// Create a client
@@ -75,9 +80,29 @@ func main() {
 		}
 	}
 	fmt.Println("started-service")
-	http.HandleFunc("/post", handlerPost)
-	http.HandleFunc("/search", handlerSearch)
+
+	// Here we are instantiating the gorilla/mux router
+	r := mux.NewRouter()
+
+	var jwtMiddleware = jwtmiddleware.New(jwtmiddleware.Options{
+		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
+			return mySigningKey, nil
+		},
+		SigningMethod: jwt.SigningMethodHS256,
+	})
+
+	r.Handle("/post", jwtMiddleware.Handler(http.HandlerFunc(handlerPost))).Methods("POST")
+	r.Handle("/search", jwtMiddleware.Handler(http.HandlerFunc(handlerSearch))).Methods("GET")
+	r.Handle("/login", http.HandlerFunc(loginHandler)).Methods("POST")
+	r.Handle("/signup", http.HandlerFunc(signupHandler)).Methods("POST")
+
+	http.Handle("/", r)
 	log.Fatal(http.ListenAndServe(":8080", nil))
+
+
+	//http.HandleFunc("/post", handlerPost)
+	//http.HandleFunc("/search", handlerSearch)
+	//log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
 func handlerPost(w http.ResponseWriter, r *http.Request) {
