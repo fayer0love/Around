@@ -39,7 +39,7 @@ const (
 	PROJECT_ID = "compact-flash-203922"
 	BT_INSTANCE = "around-post-cluster"
 	// Needs to update this URL if you deploy it to cloud.
-	ES_URL = "http://35.231.145.96:9200"
+	ES_URL = "http://35.196.44.236:9200"
 	// Needs to update this bucket based on your gcs bucket name.
 	BUCKET_NAME = "fayer0love-around"
 
