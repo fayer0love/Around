@@ -36,7 +36,7 @@ public class PostDumpFlow {
 
         CloudBigtableScanConfiguration config = new CloudBigtableScanConfiguration.Builder()
                 .withProjectId(PROJECT_ID)
-                .withInstanceId("around-post")
+                .withInstanceId("around-post-cluster")
                 .withTableId("post")
                 .build();
 
