@@ -1,6 +1,8 @@
 package com.around;
 
+import com.google.api.services.bigquery.model.TableFieldSchema;
 import com.google.api.services.bigquery.model.TableRow;
+import com.google.api.services.bigquery.model.TableSchema;
 import com.google.cloud.bigtable.dataflow.CloudBigtableIO;
 import com.google.cloud.bigtable.dataflow.CloudBigtableScanConfiguration;
 import com.google.cloud.dataflow.sdk.Pipeline;
@@ -17,6 +19,8 @@ import com.google.cloud.dataflow.sdk.io.BigQueryIO;
 
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PostDumpFlow {
 
@@ -55,6 +59,22 @@ public class PostDumpFlow {
                 c.output(row);
             }
         }));
+
+        List<TableFieldSchema> fields = new ArrayList<>();
+        fields.add(new TableFieldSchema().setName("postId").setType("STRING"));
+        fields.add(new TableFieldSchema().setName("user").setType("STRING"));
+        fields.add(new TableFieldSchema().setName("message").setType("STRING"));
+        fields.add(new TableFieldSchema().setName("lat").setType("FLOAT"));
+        fields.add(new TableFieldSchema().setName("lon").setType("FLOAT"));
+
+        TableSchema schema = new TableSchema().setFields(fields);
+        bqRows.apply(BigQueryIO.Write
+                .named("Write")
+                .to(PROJECT_ID + ":" + "post_analysis" + "." + "daily_dump_1")
+                .withSchema(schema)
+                .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_TRUNCATE)
+                .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED));
+
 
         p.run();
     }
