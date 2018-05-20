@@ -20,7 +20,7 @@ import java.nio.charset.Charset;
 
 public class PostDumpFlow {
 
-    private static final String PROJECT_ID = "xxxx";
+    private static final String PROJECT_ID = "compact-flash-203922";
     private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 
 
